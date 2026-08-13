@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>NIA 560 — Alcance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#141a2b; --bg2:#0d1120;
+    --ink:#eef1f6; --ink-soft:#a7b0c4; --muted:#7c85a0; --line:#2a3350;
+    --gold:#e8c979; --gold-d:#c79a3a;
+    --teal:#5fd6c4; --teal-d:#2f9382;
+    --rose:#f28fae; --rose-d:#c94d72;
+    --slate:#8fb4f2; --slate-d:#3d6fc4;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0; padding:0; min-height:100%; font-family:'Inter',sans-serif; color:var(--ink);}
+  body{
+    background: radial-gradient(ellipse at 50% -10%, #1c2540 0%, var(--bg1) 45%, var(--bg2) 100%);
+    display:flex; align-items:center; justify-content:center; padding:44px 16px;
+    position:relative; overflow-x:hidden;
+  }
+  #dots{position:fixed; inset:0; background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1.3px); background-size:28px 28px; pointer-events:none;}
+  #spotlight{
+    position:fixed; inset:0; pointer-events:none; z-index:1; opacity:0; transition:opacity .3s ease;
+    background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%), rgba(232,201,121,.10), transparent 70%);
+  }
+  #spotlight.on{opacity:1;}
+  #motes{position:fixed; inset:0; pointer-events:none; z-index:0;}
+  .mote{position:absolute; width:3px; height:3px; border-radius:50%; background:var(--gold); opacity:.5; animation:float 7s ease-in-out infinite;}
+  @keyframes float{0%,100%{transform:translateY(0); opacity:.2;} 50%{transform:translateY(-16px); opacity:.75;}}
+ 
+  .poster{width:820px; max-width:100%; position:relative; z-index:2;}
+ 
+  /* ---------- Title ---------- */
+  .head{text-align:center; margin-bottom:34px;}
+  .kicker{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:4px; color:var(--gold); text-transform:uppercase; margin-bottom:12px; opacity:0; animation:fadeUp .6s ease forwards;}
+  .head h1{
+    font-family:'Fraunces',serif; font-weight:800; font-size:48px; margin:0; letter-spacing:.5px;
+    background:linear-gradient(180deg,#fff, #d9c48a); -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(232,201,121,.25);
+    opacity:0; animation:fadeUp .6s ease .08s forwards;
+  }
+  .sub{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); margin-top:12px; letter-spacing:.4px; opacity:0; animation:fadeUp .6s ease .16s forwards;}
+  .rule{width:220px; height:1px; margin:18px auto 0; background:linear-gradient(90deg, transparent, var(--gold), transparent); position:relative; overflow:hidden; opacity:0; animation:fadeUp .6s ease .22s forwards;}
+  .rule::after{content:""; position:absolute; top:0; left:-40%; width:40%; height:100%; background:linear-gradient(90deg, transparent, #fff, transparent); animation:sweep 3s ease-in-out infinite;}
+  @keyframes sweep{0%{left:-40%;} 100%{left:120%;}}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+ 
+  /* ---------- Big announcement ---------- */
+  .announce{
+    display:flex; align-items:center; gap:16px; justify-content:center;
+    max-width:560px; margin:26px auto 34px; padding:16px 26px; border-radius:16px;
+    background:linear-gradient(135deg, rgba(232,201,121,.14), rgba(255,255,255,.03));
+    border:1px solid rgba(232,201,121,.45);
+    box-shadow:0 20px 44px -18px rgba(0,0,0,.5), 0 0 34px -12px rgba(232,201,121,.4);
+    opacity:0; animation:fadeUp .6s ease .26s forwards;
+    position:relative; overflow:hidden;
+  }
+  .announce::before{
+    content:""; position:absolute; top:0; left:-60%; width:60%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.1), transparent);
+    animation:sweep 3.5s ease-in-out infinite .5s;
+  }
+  .announce .aicon{
+    flex:none; width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 35% 30%, var(--gold), var(--gold-d));
+    font-size:20px; box-shadow:0 0 18px -2px var(--gold);
+    animation:flipHintIcon 2.4s ease-in-out infinite;
+  }
+  @keyframes flipHintIcon{0%,100%{transform:rotateY(0);} 50%{transform:rotateY(180deg);}}
+  .announce .atxt b{
+    display:block; font-family:'Fraunces',serif; font-weight:700; font-size:17px; color:var(--ink); margin-bottom:3px;
+  }
+  .announce .atxt span{font-size:12.5px; color:var(--ink-soft); line-height:1.4;}
+ 
+  /* ---------- Grid cards (flip) ---------- */
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:16px;}
+  .flip-card{ perspective:1400px; opacity:0; transform:translateY(14px); animation:fadeUp .55s ease forwards; cursor:pointer; }
+  #c1{animation-delay:.3s;} #c2{animation-delay:.38s;} #c3{animation-delay:.46s;} #c4{animation-delay:.54s;}
+ 
+  .flip-inner{
+    position:relative; width:100%; min-height:190px; transition:transform .6s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .flip-card.flipped .flip-inner{transform:rotateY(180deg);}
+ 
+  .face{
+    position:absolute; inset:0; border-radius:14px; padding:20px 22px; backface-visibility:hidden;
+    background:rgba(255,255,255,.045); border:1px solid var(--line); border-left:3px solid var(--acc);
+    box-shadow:0 20px 40px -18px rgba(0,0,0,.5); backdrop-filter:blur(6px);
+    transition:box-shadow .25s ease;
+  }
+  .flip-card:hover .face{box-shadow:0 26px 54px -16px rgba(0,0,0,.6), 0 0 34px -10px var(--acc);}
+  .face.back{transform:rotateY(180deg); display:flex; flex-direction:column; justify-content:center;}
+ 
+  /* cover face */
+  .face.front{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:10px;}
+  .face.front .cover-icon{
+    width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:1.5px solid var(--acc); box-shadow:0 0 18px -4px var(--acc);
+    font-family:'Fraunces',serif; font-weight:700; font-size:18px; color:var(--acc);
+  }
+  .face.front h3{font-family:'Fraunces',serif; font-weight:700; font-size:20px; margin:0; color:var(--ink);}
+  .face.front .flip-hint{position:static; margin-top:2px;}
+ 
+  #c1 .face{--acc:var(--teal);}
+  #c2 .face{--acc:var(--rose);}
+  #c3 .face{--acc:var(--slate);}
+  #c4 .face{--acc:var(--gold);}
+ 
+  .back .tag2{font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:1.5px; color:var(--acc); text-transform:uppercase; margin-bottom:10px; display:block;}
+  .back p.insight{font-family:'Fraunces',serif; font-size:14px; line-height:1.6; color:var(--ink); font-weight:500; margin:0;}
+  .back p.insight b{color:var(--acc); font-weight:700;}
+  .back ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px;}
+  .back li{display:flex; align-items:flex-start; gap:9px; font-size:12.8px; line-height:1.45; color:var(--ink-soft);}
+  .back li .ic{flex:none; color:var(--acc); font-family:'JetBrains Mono',monospace; font-weight:700; margin-top:1px;}
+ 
+  .flip-hint{
+    position:absolute; bottom:10px; right:14px; font-family:'JetBrains Mono',monospace; font-size:9.5px;
+    color:var(--muted); letter-spacing:.5px; opacity:.7; display:flex; align-items:center; gap:5px;
+  }
+  .flip-hint svg{width:11px; height:11px; opacity:.8;}
+  .flip-cta{text-align:center; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); letter-spacing:.5px; margin:6px 0 32px;}
+  .flip-cta b{color:var(--gold);}
+ 
+  /* ---------- Steps ---------- */
+  .steps-title{text-align:center; font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:3px; color:var(--gold); text-transform:uppercase; margin-bottom:26px;}
+  .steps-wrap{position:relative; margin-bottom:40px;}
+  svg.stepline{position:absolute; top:26px; left:36px; right:36px; width:calc(100% - 72px); height:2px; overflow:visible;}
+  .steps{display:flex; justify-content:space-between; gap:6px; position:relative; z-index:1;}
+  .step{flex:1; text-align:center; opacity:0; transform:translateY(10px); animation:fadeUp .5s ease forwards;}
+  .step:nth-child(1){animation-delay:.62s;} .step:nth-child(2){animation-delay:.68s;}
+  .step:nth-child(3){animation-delay:.74s;} .step:nth-child(4){animation-delay:.8s;}
+  .step:nth-child(5){animation-delay:.86s;}
+  .step .num{
+    width:52px; height:52px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces',serif; font-weight:700; font-size:19px; color:#0d1120;
+    background:linear-gradient(155deg, var(--sc), color-mix(in srgb, var(--sc) 55%, #000));
+    box-shadow:0 0 0 1px rgba(255,255,255,.15) inset, 0 0 22px -4px var(--sc), 0 10px 20px rgba(0,0,0,.4);
+  }
+  .step:nth-child(1) .num{--sc:var(--teal);}
+  .step:nth-child(2) .num{--sc:var(--gold);}
+  .step:nth-child(3) .num{--sc:var(--rose);}
+  .step:nth-child(4) .num{--sc:var(--slate);}
+  .step:nth-child(5) .num{--sc:#c9a8f5;}
+  .step .lbl{font-family:'Fraunces',serif; font-weight:600; font-size:13px; color:var(--ink); margin-bottom:4px;}
+  .step .desc{font-size:10.6px; color:var(--muted); line-height:1.4; padding:0 4px;}
+ 
+  /* ---------- Final banner ---------- */
+  .final{
+    text-align:center; padding:22px 30px; border-radius:16px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg, rgba(232,201,121,.12), rgba(255,255,255,.03));
+    border:1px solid rgba(232,201,121,.35);
+    box-shadow:0 24px 50px -20px rgba(0,0,0,.5), 0 0 40px -16px rgba(232,201,121,.3);
+    opacity:0; animation:fadeUp .6s ease .95s forwards;
+  }
+  .final::before{
+    content:""; position:absolute; top:0; left:-60%; width:60%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+    animation:sweep 4s ease-in-out infinite 1s;
+  }
+  .final h4{
+    font-family:'Fraunces',serif; font-weight:700; font-size:22px; margin:0; color:var(--ink); letter-spacing:.3px;
+  }
+  .final .tag{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--gold); letter-spacing:1.5px; margin-top:8px;}
+</style>
+</head>
+<body>
+ 
+<div id="dots"></div>
+<div id="motes"></div>
+<div id="spotlight"></div>
+ 
+<div class="poster">
+ 
+  <div class="head">
+    <div class="kicker">Norma Internacional de Auditoría</div>
+    <h1>NIA 560</h1>
+    <div class="sub">HECHOS POSTERIORES AL CIERRE · ALCANCE · APARTADO 1</div>
+    <div class="rule"></div>
+  </div>
+ 
+  <div class="announce">
+    <div class="aicon">🔄</div>
+    <div class="atxt">
+      <b>¡Gira las tarjetas!</b>
+      <span>Cada tarjeta está cerrada como una tapa — tócala o haz clic para voltearla y descubrir su contenido.</span>
+    </div>
+  </div>
+ 
+  <div class="grid">
+    <div class="flip-card" id="c1">
+      <div class="flip-inner">
+        <div class="face front">
+          <span class="cover-icon">?</span>
+          <h3>¿Qué es?</h3>
+          <span class="flip-hint">toca para revelar ↻</span>
+        </div>
+        <div class="face back">
+          <span class="tag2">¿Qué es?</span>
+          <p class="insight">Es la norma que trata <b>la responsabilidad del auditor</b> frente a los hechos ocurridos después de la fecha de los estados financieros, dentro de una auditoría de EEFF.</p>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="flip-card" id="c2">
+      <div class="flip-inner">
+        <div class="face front">
+          <span class="cover-icon">✓</span>
+          <h3>Características</h3>
+          <span class="flip-hint">toca para revelar ↻</span>
+        </div>
+        <div class="face back">
+          <span class="tag2">Características</span>
+          <ul>
+            <li><span class="ic">✓</span>Aplica en toda auditoría de estados financieros</li>
+            <li><span class="ic">✓</span>Cubre hechos ocurridos tras el cierre</li>
+            <li><span class="ic">✓</span>Es responsabilidad directa del auditor</li>
+            <li><span class="ic">✓</span>Se relaciona con la fecha del informe</li>
+            <li><span class="ic">✓</span>Vigente desde el 15·XII·2009</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="flip-card" id="c3">
+      <div class="flip-inner">
+        <div class="face front">
+          <span class="cover-icon">◆</span>
+          <h3>Elementos clave</h3>
+          <span class="flip-hint">toca para revelar ↻</span>
+        </div>
+        <div class="face back">
+          <span class="tag2">Elementos clave</span>
+          <ul>
+            <li><span class="ic">◆</span>El auditor</li>
+            <li><span class="ic">◆</span>Hechos posteriores al cierre</li>
+            <li><span class="ic">◆</span>Auditoría de estados financieros</li>
+            <li><span class="ic">◆</span>Fecha del informe</li>
+            <li><span class="ic">◆</span>Responsabilidad</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="flip-card" id="c4">
+      <div class="flip-inner">
+        <div class="face front">
+          <span class="cover-icon">→</span>
+          <h3>¿Para qué sirve?</h3>
+          <span class="flip-hint">toca para revelar ↻</span>
+        </div>
+        <div class="face back">
+          <span class="tag2">¿Para qué sirve?</span>
+          <ul>
+            <li><span class="ic">✓</span>Delimita el trabajo del auditor tras el cierre</li>
+            <li><span class="ic">✓</span>Da un marco temporal de referencia</li>
+            <li><span class="ic">✓</span>Ayuda a que los EEFF reflejen hechos relevantes</li>
+            <li><span class="ic">✓</span>Se conecta con la fecha del informe de auditoría</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flip-cta">toca cualquier tarjeta para <b>abrirla</b> y ver su contenido</div>
+ 
+  <div class="steps-title">Pasos para entender el alcance</div>
+  <div class="steps-wrap">
+    <svg class="stepline" viewBox="0 0 700 2" preserveAspectRatio="none">
+      <line x1="0" y1="1" x2="700" y2="1" stroke="#3a4364" stroke-width="1.4" stroke-dasharray="1 7"/>
+    </svg>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="lbl">Identifica</div><div class="desc">al auditor como responsable directo</div></div>
+      <div class="step"><div class="num">2</div><div class="lbl">Ubica</div><div class="desc">el hecho ocurrido tras el cierre</div></div>
+      <div class="step"><div class="num">3</div><div class="lbl">Verifica</div><div class="desc">la fecha del informe de auditoría</div></div>
+      <div class="step"><div class="num">4</div><div class="lbl">Relaciona</div><div class="desc">con la auditoría de estados financieros</div></div>
+      <div class="step"><div class="num">5</div><div class="lbl">Aplica</div><div class="desc">la responsabilidad descrita en la norma</div></div>
+    </div>
+  </div>
+ 
+  <div class="final">
+    <h4>Una norma, una idea clara.</h4>
+    <div class="tag">NIA 560 · HECHOS POSTERIORES AL CIERRE</div>
+  </div>
+ 
+</div>
+ 
+<script>
+  const motes = document.getElementById('motes');
+  for(let i=0;i<24;i++){
+    const m = document.createElement('div');
+    m.className='mote';
+    m.style.left = (Math.random()*100)+'%';
+    m.style.top = (Math.random()*100)+'%';
+    m.style.animationDelay = (Math.random()*6)+'s';
+    m.style.animationDuration = (5+Math.random()*5)+'s';
+    motes.appendChild(m);
+  }
+ 
+  // cursor-following spotlight glow
+  const spot = document.getElementById('spotlight');
+  document.addEventListener('mousemove', (e)=>{
+    spot.style.setProperty('--mx', e.clientX + 'px');
+    spot.style.setProperty('--my', e.clientY + 'px');
+    spot.classList.add('on');
+  });
+  document.addEventListener('mouseleave', ()=> spot.classList.remove('on'));
+ 
+  // flip cards on click / keyboard
+  document.querySelectorAll('.flip-card').forEach(card=>{
+    card.setAttribute('tabindex','0');
+    card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+    card.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter' || e.key===' '){ e.preventDefault(); card.classList.toggle('flipped'); }
+    });
+  });
+</script>
+ 
+</body>
+</html>
